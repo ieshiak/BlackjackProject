@@ -7,7 +7,7 @@ public class Card {
 	public Card(Rank rank, Suit suit) {
 		this.rank = rank;
 		this.suit = suit;
-		System.out.println("Debug: Created card: " + this);
+		//System.out.println("Debug: Created card: " + this);
 	}
 
 	public int getValue() {

@@ -8,36 +8,46 @@ public class Player extends Deck implements Decisions {
 	private String name;
 	private int chips;
 	private int betAmount;
+	private Scanner scanner;
 
 	public Player(String name) {
 		this.name = name;
 		hand = new BlackjackHand();
 		chips = 0;
 		betAmount = 0;
-	}
-
-	public void takeTurn(Deck deck) {
-		while (!hand.isBust() && wantsToHit()) {
-			Card card = deck.dealCard();
-			addCardToHand(card);
-			System.out.println(name + " draws: " + card);
-		}
-		if (!hand.isBust()) {
-			stand();
-		}
-	}
-
-	private boolean wantsToHit() {
 		Scanner scanner = new Scanner(System.in);
-
-		System.out.print(name + ", do you want to hit? (y/n): ");
-		String input = scanner.nextLine().toLowerCase();
-
-		boolean wantsToHit = input.equals("y");
-		System.out.println(name + " wants to hit: " + wantsToHit); // Debug print
-		return wantsToHit;
 	}
 
+	 public void takeTurn(Deck deck, boolean isHuman) {
+		 
+		 while (!hand.isBust() && wantsToHit(isHuman)) {
+	            Card card = deck.dealCard();
+	            addCardToHand(card);
+	            System.out.println(name + " draws: " + card);
+	        }
+	        if (!hand.isBust()) {
+	            stand();
+	        }
+	    }
+
+
+	 private boolean wantsToHit(boolean isHuman) {
+	        if (isHuman) {
+	            System.out.print(name + ", do you want to hit? (y/n): ");
+	            String input = scanner.nextLine().toLowerCase();
+	            return input.equals("y");
+	        } else {
+	            
+	            return hand.getHandValue() < 17;
+	        }
+	 }
+
+	 private boolean shouldHit() {
+	        // Implement logic for non-human players (AI)
+	        // Return true if the AI decides to hit, false otherwise
+	        return false;
+	    }
+	 
 	public void resetHand() {
 		hand.clear();
 		System.out.println(name + "'s hand is reset."); // Debug print

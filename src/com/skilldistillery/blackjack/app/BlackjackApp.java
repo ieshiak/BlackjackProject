@@ -7,36 +7,57 @@ import com.skilldistillery.blackjack.entities.Dealer;
 import com.skilldistillery.blackjack.entities.Deck;
 import com.skilldistillery.blackjack.entities.Player;
 import com.skilldistillery.blackjack.entities.PlayerManager;
-
+import java.util.Random;
 
 public class BlackjackApp {
     private PlayerManager playerManager;
     private Dealer dealer;
     private Deck deck;
     private BettingSystem bettingSystem;
+    private Scanner scanner;
 
     public BlackjackApp() {
         playerManager = new PlayerManager();
         deck = new Deck(); 
         dealer = new Dealer(deck);
         bettingSystem = new BettingSystem();
+        scanner = new Scanner(System.in);
     }
 
-    public void startGame() {
-        System.out.println("Welcome to Blackjack!");
+ public void startGame() {
+     System.out.println("Welcome to Blackjack!");
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the number of players: ");
-        int numPlayers = scanner.nextInt();
+     // Ask the user for the number of human players
+     System.out.print("Enter the number of human players (1-6): ");
+     int numHumanPlayers = scanner.nextInt();
+     scanner.nextLine(); // Consume the newline character
 
-        for (int i = 1; i <= numPlayers; i++) {
-            System.out.print("Enter the name of Player " + i + ": ");
-            String playerName = scanner.next();
-            playerManager.addPlayer(new Player(playerName));
-        }
+     // Validate and adjust the number of human players
+     numHumanPlayers = Math.min(numHumanPlayers, 6);
+     int maxTotalPlayers = 7;
+     int numAIPlayers = maxTotalPlayers - numHumanPlayers;
 
-    }
+     // Add human players to the manager based on user input
+     for (int i = 1; i <= numHumanPlayers; i++) {
+         System.out.print("Enter the name of Human Player " + i + ": ");
+         String playerName = scanner.nextLine();
+         playerManager.addPlayer(new Player(playerName));
+     }
 
+     // Add AI players to the manager based on the remaining slots with random names
+     String[] aiPlayerNames = {"MIke", "Brandon", "Alicia", "Whitney", "Danny", "Lucy"};
+     Random random = new Random();
+
+     while (numAIPlayers > 0) {
+         String aiPlayerName = aiPlayerNames[random.nextInt(aiPlayerNames.length)];
+         playerManager.addPlayer(new Player(aiPlayerName));
+         numAIPlayers--;
+     }
+
+     bettingSystem.openBetting();
+ }
+
+        
     public void dealInitial() {
         System.out.println("Dealing initial cards...");
 
@@ -59,9 +80,15 @@ public class BlackjackApp {
 
         dealInitial();
 
+        Player humanPlayer = playerManager.getNextPlayer(); // Adjust this based on your logic
+        System.out.println("\n" + humanPlayer + "'s turn:");
+        humanPlayer.takeTurn(deck, true);
+        
         for (Player player : playerManager.getPlayers()) {
-            System.out.println("\n" + player + "'s turn:");
-            player.takeTurn(deck);
+            if (player != humanPlayer) {
+                System.out.println("\n" + player + "'s turn:");
+                player.takeTurn(deck, false);
+            }
         }
 
         bettingSystem.closeBetting();

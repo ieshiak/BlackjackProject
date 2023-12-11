@@ -8,17 +8,17 @@ public abstract class Hand {
 
     public Hand() {
         cards = new ArrayList<>();
-        System.out.println("Debug: Hand created.");
+        //System.out.println("Debug: Hand created.");
     }
 
     public void addCard(Card card) {
         cards.add(card);
-        System.out.println("Debug: Added card to hand: " + card);
+        //System.out.println("Debug: Added card to hand: " + card);
     }
 
     public void clear() {
         cards.clear();
-        System.out.println("Debug: Cleared hand.");
+        //System.out.println("Debug: Cleared hand.");
     }
 
     public int getHandValue() {
@@ -39,16 +39,16 @@ public abstract class Hand {
         while (value > 21 && ace > 0) {
             value -= 10;
             ace--;
-            System.out.println("Debug: Adjusted value for ACE.");
+            //System.out.println("Debug: Adjusted value for ACE.");
         }
 
-        System.out.println("Debug: Hand value calculated: " + value);
+        //System.out.println("Debug: Hand value calculated: " + value);
         return value;
     }
 
     @Override
     public String toString() {
-        System.out.println("Debug: Hand toString called.");
+        //System.out.println("Debug: Hand toString called.");
         return cards.toString();
     }
 }

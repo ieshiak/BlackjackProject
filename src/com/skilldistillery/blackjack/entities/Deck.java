@@ -26,12 +26,12 @@ public class Deck {
 	}
 
 	public void shuffle() {
-		System.out.println("Debug: Shuffling the deck.");
+		//System.out.println("Debug: Shuffling the deck.");
 		Collections.shuffle(cards);
 	}
 
 	public Card dealCard() {
-		System.out.println("Debug: Dealing a card.");
+		//System.out.println("Debug: Dealing a card.");
 		return cards.remove(0);
 	}
 
@@ -46,7 +46,7 @@ public class Deck {
 	public Card drawCard() {
         if (cards.isEmpty()) {
             
-            System.out.println("The deck is empty. Reshuffling...");
+            //System.out.println("The deck is empty. Reshuffling...");
             initializeDeck();
         }
         return cards.remove(0);

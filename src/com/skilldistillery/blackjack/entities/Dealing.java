@@ -13,7 +13,7 @@ public class Dealing {
 	}
 
 	private void run() {
-		System.out.println("Debug: Starting the run method.");
+		//System.out.println("Debug: Starting the run method.");
 
 		Deck deck = new Deck();
 
@@ -33,19 +33,19 @@ public class Dealing {
 				totalValue += c.getValue();
 				hand.add(c);
 
-				System.out.println("Debug: Dealt card: " + c);
+				//System.out.println("Debug: Dealt card: " + c);
 			}
 			printHandAndValue(hand, totalValue);
 		} catch (InputMismatchException e) {
 			System.out.println("That is not a valid number of cards.");
 		} finally {
 			sc.close();
-			System.out.println("Debug: Scanner closed.");
+			//System.out.println("Debug: Scanner closed.");
 		}
 	}
 
 	private void printHandAndValue(List<Card> hand, int value) {
-		System.out.println("Debug: Printing hand and value.");
+		//System.out.println("Debug: Printing hand and value.");
 
 		for (Card card : hand) {
 			System.out.println(card);

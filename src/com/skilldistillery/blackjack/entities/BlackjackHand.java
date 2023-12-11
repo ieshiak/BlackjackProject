@@ -71,7 +71,7 @@ public class BlackjackHand extends Hand {
 
 	public void addCard(Card card) {
 		cards.add(card);
-		System.out.println("Added card to hand: " + card);
+		//System.out.println("Added card to hand: " + card);
 	}
 
 }
