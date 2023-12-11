@@ -8,7 +8,9 @@ public class Deck {
 	private List<Card> cards;
 
 	public Deck() {
-		cards = createDeck();
+		this.cards = new ArrayList<>();
+		initializeDeck();
+		shuffle(); 
 	}
 
 	private List<Card> createDeck() {
@@ -26,12 +28,12 @@ public class Deck {
 	}
 
 	public void shuffle() {
-		//System.out.println("Debug: Shuffling the deck.");
+		// System.out.println("Debug: Shuffling the deck.");
 		Collections.shuffle(cards);
 	}
 
 	public Card dealCard() {
-		//System.out.println("Debug: Dealing a card.");
+		// System.out.println("Debug: Dealing a card.");
 		return cards.remove(0);
 	}
 
@@ -44,23 +46,15 @@ public class Deck {
 	}
 
 	public Card drawCard() {
-        if (cards.isEmpty()) {
-            
-            //System.out.println("The deck is empty. Reshuffling...");
-            initializeDeck();
-        }
-        return cards.remove(0);
+		if (cards.isEmpty()) {
+			throw new IllegalStateException("The deck is empty. Unable to draw a card.");
+		}
+		return cards.remove(0);
 	}
 
 	private void initializeDeck() {
-	    cards = new ArrayList<>();
-
-	    for (Suit suit : Suit.values()) {
-	        for (Rank rank : Rank.values()) {
-	            cards.add(new Card(rank, suit));
-	        }
-	    }
-
-	    shuffle();
+		cards.addAll(createDeck());
+		shuffle();
 	}
+
 }

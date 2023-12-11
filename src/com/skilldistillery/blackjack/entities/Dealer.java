@@ -1,69 +1,62 @@
 package com.skilldistillery.blackjack.entities;
 
-public class Dealer implements Decisions {
-    private BlackjackHand hand;
-    private boolean isDealerTurn;
+import java.util.ArrayList;
+import java.util.List;
 
-    public Dealer(Deck deck) {
-        hand = new BlackjackHand();
-        isDealerTurn = false;
-        drawCard(deck);
-        drawCard(deck);
-    }
+public class Dealer extends Player {
+	private Deck deck;
+	private List<Card> hand;
+	
+	
+	public Dealer(Deck deck) {
+	this.deck = deck;
+    this.hand = new ArrayList<>();
+}
 
-    public void revealCard() {
-        System.out.println("Dealer reveals: " + hand.getCards().get(1)); // Assuming the second card is the face-down card
-    }
+public void shuffleDeck() {
+    deck.shuffle();
+}
 
-    public void play(Deck deck) {
-        startDealerTurn(); 
-        while (getHandTotal() < 17) {
-            drawCard(deck);
-        }
-        stand(); 
-        endDealerTurn();
-    }
+public Card dealCard() {
+    return deck.dealCard();
+}
 
-    public void dealCard(Deck deck) {
-        Card card = deck.dealCard();
-        addCardToHand(card);
-        System.out.println("Dealer draws: " + card);
-    }
+public void addCardToHand(Card card) {
+    hand.add(card);
+}
 
-    @Override
-    public void addCardToHand(Card dealtCard) {
-        hand.addCard(dealtCard);
-    }
+public int getHandValue() {
+    int value = 0;
+    int numAces = 0;
 
-    @Override
-    public void stand() {
-        System.out.println("Dealer stands.");
-    }
+    for (Card card : hand) {
+        int cardValue = card.getValue();
+        value += cardValue;
 
-    @Override
-    public int getHandTotal() {
-        return hand.getHandValue();
-    }
-
-    public void startDealerTurn() {
-        isDealerTurn = true;
-        System.out.println("Dealer's turn has started.");
-    }
-
-    public void endDealerTurn() {
-        isDealerTurn = false;
-        System.out.println("Dealer's turn has ended.");
-    }
-
-    public boolean isDealerTurn() {
-        return isDealerTurn;
-    }
-
-    public void drawCard(Deck deck) {
-        Card card = deck.drawCard();
-        addCardToHand(card);
-        if (isDealerTurn) {
-            System.out.println("Dealer draws: " + card);
+        if (cardValue == 11) { // Ace
+            numAces++;
         }
     }
+
+    // Adjust for Aces
+    while (value > 21 && numAces > 0) {
+        value -= 10;
+        numAces--;
+    }
+
+    return value;
+}
+
+public void displayPartialHand() {
+    System.out.println("[" + hand.get(0) + "]");
+    System.out.println("[Face Down]");
+    System.out.println("----------------------------------------------");
+}
+
+public void displayHand() {
+    for (Card card : hand) {
+        System.out.println("[" + card + "]");
+    }
+    System.out.println("Valued at: " + getHandValue());
+}
 }

@@ -1,54 +1,31 @@
 package com.skilldistillery.blackjack.entities;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Hand {
-    protected List<Card> cards;
+public class Hand {
+	private List<Card> cards;
 
-    public Hand() {
-        cards = new ArrayList<>();
-        //System.out.println("Debug: Hand created.");
-    }
+	public Hand(List<Card> cards) {
+		this.cards = cards;
+	}
 
-    public void addCard(Card card) {
-        cards.add(card);
-        //System.out.println("Debug: Added card to hand: " + card);
-    }
+	public int calculateHandValue() {
+		int value = 0;
+		int numAces = 0;
 
-    public void clear() {
-        cards.clear();
-        //System.out.println("Debug: Cleared hand.");
-    }
+		for (Card card : cards) {
+			value += card.getValue();
+			if (card.getRank() == Rank.ACE) {
+				numAces++;
+			}
+		}
 
-    public int getHandValue() {
-        int value = 0;
-        int ace = 0;
+		// Adjust for Aces
+		while (value > 21 && numAces > 0) {
+			value -= 10;
+			numAces--;
+		}
 
-        for (Card card : cards) {
-            Rank rank = card.getRank();
-            if (rank != null) {
-                value += rank.getValue();
-                if (rank == Rank.ACE) {
-                    ace++;
-                }
-                System.out.println("Debug: Card value added: " + rank.getValue());
-            }
-        }
-
-        while (value > 21 && ace > 0) {
-            value -= 10;
-            ace--;
-            //System.out.println("Debug: Adjusted value for ACE.");
-        }
-
-        //System.out.println("Debug: Hand value calculated: " + value);
-        return value;
-    }
-
-    @Override
-    public String toString() {
-        //System.out.println("Debug: Hand toString called.");
-        return cards.toString();
-    }
+		return value;
+	}
 }

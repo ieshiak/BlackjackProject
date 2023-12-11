@@ -14,11 +14,19 @@ public class BlackjackMessages {
     };
 
     private final String[] startGameMessages = {
-            "Prepare for liftoff! The blackjack adventure is about to begin.",
-            "Game on! Let the cards fall where they may.",
-            "Shuffling the deck, the stage is set for a thrilling game!",
-            "Ante up! It's time to test your blackjack skills.",
-            "Dealing the first cards! May the odds be in your favor.",
+    		"The deck is shuffled, and the stage is set for an exhilarating game. Are you in? (y/n)",
+    		"Time to ante up! Test your blackjack skills in this daring game. Ready to play? (y/n)",
+    		"The first cards are dealt! May the odds be in your favor. Want to start the game? (y/n)",
+    		"Shuffling the deck, the stage is set for a thrilling game. Ready to roll the dice? (y/n)",
+    		"Ante up! It's time to put your blackjack skills to the test. Are you game? (y/n)",
+    		"Dealing the first cards! May the odds be in your favor. Ready to kick off the game? (y/n)",
+    		"Strap in for another round! The cards are getting ready for a rematch, and so should you. (y/n)",
+    	    "Round two, anyone? The cards are whispering sweet strategies, and the dealer is dealing up a storm! (y/n)",
+    	    "Ready or not, here comes another round! The cards are doing jumping jacks, and the dealer is dealing joy. (y/n)",
+    	    "Buckle up! The cards are doing their stretches, and the dealer is ready for another dance with destiny. (y/n)",
+    	    "Game on! The cards are putting on their game faces, and the dealer is dealing out a fresh set of surprises. (y/n)",
+    	    "Who's up for a sequel? The cards are practicing their plot twists, and the dealer is ready to deal some drama. (y/n)",
+    	    "Double or nothing, right? The cards are doing a quick huddle, and the dealer is dealing out second chances. (y/n)",
     };
 
     private final String[] hitMessages = {
@@ -76,7 +84,20 @@ public class BlackjackMessages {
             "A close call! The dealer emerges victorious.",
             "Fortune favors the dealer! A win for the house.",
     };
+    private final String[] itsATieMessages = {
+    "Looks like we've got a tie! The cards are as indecisive as a cat trying to choose a nap spot.",
+    "Two peas in a pod! The game ends in a tie, just like mismatched socks that somehow work together.",
+    "Tie game! It's like the cards couldn't decide which side to root for, so they went for a draw.",
+    "Well, this is awkward. The game ends in a tie, leaving the cards in a state of confusion, like a GPS without a signal.",
+    "A tie! The cards must be pulling a 'should I stay or should I go' routine. Game, you do you!",
+    };
 
+
+ 
+    public void itsATieMessages() {
+        System.out.println(getRandomMessage(itsATieMessages));
+    }
+    
     public void welcomeMessage() {
         System.out.println(getRandomMessage(welcomeMessages));
     }
