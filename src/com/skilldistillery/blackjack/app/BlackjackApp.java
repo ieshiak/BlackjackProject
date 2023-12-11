@@ -28,13 +28,13 @@ public class BlackjackApp {
      System.out.println("Welcome to Blackjack!");
 
      // Ask the user for the number of human players
-     System.out.print("Enter the number of human players (1-6): ");
+     System.out.print("Enter the number of human players (1-3): ");
      int numHumanPlayers = scanner.nextInt();
-     scanner.nextLine(); // Consume the newline character
+     scanner.nextLine(); 
 
      // Validate and adjust the number of human players
-     numHumanPlayers = Math.min(numHumanPlayers, 6);
-     int maxTotalPlayers = 7;
+     numHumanPlayers = Math.min(numHumanPlayers, 3);
+     int maxTotalPlayers = 4;
      int numAIPlayers = maxTotalPlayers - numHumanPlayers;
 
      // Add human players to the manager based on user input
@@ -45,7 +45,7 @@ public class BlackjackApp {
      }
 
      // Add AI players to the manager based on the remaining slots with random names
-     String[] aiPlayerNames = {"MIke", "Brandon", "Alicia", "Whitney", "Danny", "Lucy"};
+     String[] aiPlayerNames = {"Mike", "Brandon", "Alicia", "Whitney", "Danny", "Lucy"};
      Random random = new Random();
 
      while (numAIPlayers > 0) {
@@ -80,17 +80,16 @@ public class BlackjackApp {
 
         dealInitial();
 
-        Player humanPlayer = playerManager.getNextPlayer(); // Adjust this based on your logic
+        Player humanPlayer = playerManager.getNextPlayer();
         System.out.println("\n" + humanPlayer + "'s turn:");
-        humanPlayer.takeTurn(deck, true);
-        
+        humanPlayer.takeTurn(deck, true, scanner);
+
         for (Player player : playerManager.getPlayers()) {
             if (player != humanPlayer) {
                 System.out.println("\n" + player + "'s turn:");
-                player.takeTurn(deck, false);
+                player.takeTurn(deck, false, scanner);
             }
         }
-
         bettingSystem.closeBetting();
 
         dealer.startDealerTurn();
