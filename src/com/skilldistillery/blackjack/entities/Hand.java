@@ -1,31 +1,40 @@
 package com.skilldistillery.blackjack.entities;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class Hand {
-	private List<Card> cards;
+public abstract class Hand {
+    protected List<Card> cards;
 
-	public Hand(List<Card> cards) {
-		this.cards = cards;
-	}
+    public Hand() {
+        cards = new ArrayList<>();
+        //System.out.println("Debug: Hand created.");
+    }
 
-	public int calculateHandValue() {
-		int value = 0;
-		int numAces = 0;
+    public void addCard(Card card) {
+        cards.add(card);
+        //System.out.println("Debug: Card added to hand: " + card);
+    }
 
-		for (Card card : cards) {
-			value += card.getValue();
-			if (card.getRank() == Rank.ACE) {
-				numAces++;
-			}
-		}
+    public void clear() {
+        cards.clear();
+        //System.out.println("Debug: Hand cleared.");
+    }
 
-		// Adjust for Aces
-		while (value > 21 && numAces > 0) {
-			value -= 10;
-			numAces--;
-		}
+    public abstract int getHandValue();
 
-		return value;
-	}
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (Card card : cards) {
+            builder.append(card).append("\n");
+        }
+        return builder.toString();
+    }
+
+    public List<Card> getCards() {
+        return cards;
+   
+    }
 }
