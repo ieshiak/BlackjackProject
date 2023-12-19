@@ -1,229 +1,177 @@
 package com.skilldistillery.blackjack.app;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import com.skilldistillery.blackjack.entities.BlackjackHand;
-import com.skilldistillery.blackjack.entities.Card;
+import com.skilldistillery.blackjack.entities.DCQuotes;
 import com.skilldistillery.blackjack.entities.Dealer;
 import com.skilldistillery.blackjack.entities.Deck;
+import com.skilldistillery.blackjack.entities.HiLoCardGame;
 import com.skilldistillery.blackjack.entities.Player;
 
 public class BlackjackGame {
 
-	// Declare variables needed for the Game class
-
-	private BlackjackHand bjh = new BlackjackHand(); // Object representing the player's hand
-	private Dealer d = new Dealer(); // Dealer object
-	private Player p = new Player(); // Player object
-	private int wins, losses, ties; // Variables to track game outcomes
-	private Deck deck = new Deck();
-	private boolean playAgain;
+	private BlackjackHand bjh = new BlackjackHand();
+	private Dealer d = new Dealer("Dealer");
+	private Player p = new Player();
+	private int wins, losses, ties;
+	private Deck deck = new Deck(true);
+	private Deck usedCards = new Deck();
 	private Scanner scanner;
-	
-	
-    
-	
+	HiLoCardGame hiLo = new HiLoCardGame();
+	private int currentBalance;
+	DCQuotes dc = new DCQuotes();
+	String randomQuote = dc.getRandomQuote();
+	private int roundWins, roundLosses, roundTies;
+	//private final int LOW_BALANCE_THRESHOLD = 100;
+
 	public BlackjackGame() {
-		this.playAgain = false;
 		this.scanner = new Scanner(System.in);
-		
+
 	}
 
-	// Method to start and play the game
 	public void play() {
-		
+		System.out.println(randomQuote);
 		titleScreen();
 		p.inputNameDuringGame();
-		deck.shuffle();
-		deck.shuffle();
+		d.chooseTheDealer();
+		rounds();
+	}
+
+	public void rounds() {
+		p.placeBet();
 		shouldYouContinue();
-		displayStats();
-		deck.cardsLeftInDeck();
 		playOrExit();
 	}
 
-//    // Method to check if the game should continue to the next round
 	public void shouldYouContinue() {
-
-		resetHands();
-		//refreshGame();
 		deck.shuffle();
-
-		// Check if the player wants to continue
-		if (wins > 0 || losses > 0 || ties > 0) {
-			System.out.println();
-			// d.dealerDiscard();
-			// p.playerDiscard();
-		}
-		if (deck.cardsLeftInDeck() < 4) {
-			//deck.reloadDeckFromDiscard();
-		}
-		// Deal two cards to the player and the dealer
-		p.addCardToHand(deck.dealCard());
-		d.addCardToHand(deck.dealCard());
-		p.addCardToHand(deck.dealCard());
-		d.addCardToHand(deck.dealCard());
-		// show hands
-		d.dealerPartialHand();
-		p.playersDisplayFirstHand();
-
-		// Check hands
-
-		if (d.isBlackjack()) {
-			d.revealDealerFullHand();
-			// player
-			if (p.isBlackjack()) {
-				System.out.println("You both have 21 - Tie.");
-				ties++;
-				printFinalHands();
-				resetHands();
-				clearScreen();
-				// shouldYouContinue();
-			} else {
-				System.out.println("Dealer has Blackjack. You lose.");
-				losses++;
-			}
+//			playOrExit();
+		
+		throwAwayUsedCards();
+		if (deck.cardsLeft() < 4) {
+			hiLo.doYouWantToPlayHiLo();
 		}
 
-		if (p.isBlackjack()) {
-			System.out.println("You have Blackjack! You win!");
-			wins++;
-			// Start a new round
-			printFinalHands();
-			resetHands();
-			clearScreen();
-			// shouldYouContinue();
-			return; // Return to avoid executing the rest of the method
-		}
+		dealShowShuffle();
+		p.hitOrStand(deck, usedCards);
 
-		// Let the player decide what to do next (hit or stand)
-		p.hitOrStand();
-
-		// Check if the player busted
-		if (p.getHandValue() > 21) {
-			System.out.println("You have gone over 21.");
-			losses++;
-			printFinalHands();
-			resetHands();
-			clearScreen();
-			// shouldYouContinue();
-		}
-		d.revealDealerFullHand();
-
-		// Dealer keeps hitting until their hand value is at least 17
-		while (d.getHandValue() < 17) {
-			Card card = deck.dealCard(); // Assuming you have a method to deal a card from the deck
-			d.addCardToHand(card);
-			d.revealDealerFullHand();
-			// System.out.println("Dealer draws: " + card);
-		}
-
-		// Check who wins or if it's a push
-		if (d.getHandValue() > 21) {
-			System.out.println("Dealer busts");
-			wins++;
-
-		} else if (d.getHandValue() > p.getHandValue()) {
-			System.out.println("You lose.");
-			losses++;
-		} else if (p.getHandValue() > d.getHandValue()) {
-			System.out.println("You win.");
-			wins++;
+		if (p.isBust()) {
+		    losses++;
 		} else {
-			System.out.println("Push.");
-			ties++;
+		    if (p.isBlackjack()) {
+		        wins++;
+		        d.displayHandAndValue();
+		        p.addBalance(2 * p.getBet()); // Earn 2x the bet on blackjack
+		    } else {
+		        while (d.valueOfCurrentHand() < 17) {
+		            d.hit(deck, usedCards);
+		            d.displayHandAndValue();
+		        }
+
+		        if (d.isBust() || p.valueOfCurrentHand() > d.valueOfCurrentHand()) {
+		            wins++;
+		        } else if (p.valueOfCurrentHand() < d.valueOfCurrentHand()) {
+		            losses++;
+		        } else {
+		            ties++;
+		        }
+		    }
 		}
-		//printFinalHands();
-		//resetHands();
-		//clearScreen();
-		//clearConsole();
-		deck.shuffle();
-		d.revealDealerFullHand();
-		//deck.addToDiscardPile();
-		// shouldYouContinue();
+
+		playOrExit();
 	}
 
-	private void printFinalHands() {
+	public void dealShowShuffle() {
+		d.takeCardFromDeck(deck);
+		d.takeCardFromDeck(deck);
 
-		System.out.println("\nThe dealer's hand looks like this:");
-		d.revealDealerFullHand();
-		// dSystem.out.println("----------------------------------------------");
+		p.takeCardFromDeck(deck);
+		p.takeCardFromDeck(deck);
 
-		System.out.println("\nPlayer's hand looks like this:");
-		p.playersDisplayFirstHand();
-		// System.out.println("----------------------------------------------");
+		d.printFirstHand();
+		p.displayHandAndValue();
+
+	}
+
+	public void calculateRoundScores() {
+		if (wins > 0) {
+			p.addBalance(2 * p.getBet());
+			System.out.println("Congratulations! You have won!");
+			roundWins++;
+		} else if (losses > 0) {
+			System.out.println("Sorry, you have lost. Better luck next time.");
+			roundLosses++;
+		} else if (ties > 0) {
+			System.out.println("It's a tie! ");
+			p.addBalance(p.getBet());
+			roundTies++;
+		}
+		wins = 0;
+		losses = 0;
+		ties = 0;
+
+		currentBalance = p.getBalance();
 	}
 
 	public void displayStats() {
-		System.out.println("Starting Next Round... Wins: " + wins + " Losses: " + losses + " Ties: " + ties);
-	}
-
-	private void resetHands() {
-		p.clearHand();
-		d.clearHand();
-
-	}
-
-	public void clearScreen() {
-		System.out.print("\033[H\033[2J");
-		System.out.flush();
-	}
-
-	public void refreshGame() {
-		System.out.println("Refreshing the game...");
-		//deck.initializeDeck();
-		wins = 0;
-		losses = 0;
-
-	}
-
-	public void clearConsole() {
-		try {
-			final String os = System.getProperty("os.name");
-			if (os.contains("Windows")) {
-				Runtime.getRuntime().exec("cls");
-			} else {
-				Runtime.getRuntime().exec("clear");
-			}
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	private void titleScreen() {
+		System.out.println("W: " + roundWins + "\t" + "L: " + roundLosses + "\t" + "T: " + roundTies
+				+ "\tCurrent Balance: " + currentBalance);
 		System.out.println("----------------------------------------------");
 		System.out.println();
-		System.out.println("            -------         -------           ");
-		System.out.println("           |A      |       |10     |          ");
-		System.out.println("           |       |       |       |          ");
-		System.out.println("           |       |       |       |          ");
-		System.out.println("           |       |       |       |          ");
-		System.out.println("           |      A|       |     10|          ");
-		System.out.println("            -------         -------           ");
-		System.out.println();
-		System.out.println("        The Blackjack App Java Style!!        ");
-		System.out.println("----------------------------------------------");
-		System.out.println();
-
 	}
-
-	
 
 	public void playOrExit() {
+		d.displayHandAndValue();
+		p.displayHandAndValue();
+		calculateRoundScores();
+		System.out.println();
+		displayStats();
+		if (p.getBalance() <= 0) {
+			hiLo.doYouWantToPlayHiLo();
+		}
+//		  if (p.getBalance() <= LOW_BALANCE_THRESHOLD) {
+//		        hiLo.doYouWantToPlayHiLo();
+//		    }
+
 		while (true) {
+
 			System.out.print("Do you want to continue with the game? (y/n): ");
 			String userInput = scanner.nextLine().toLowerCase();
+			System.out.println("----------------------------------------------");
 
 			switch (userInput) {
 			case "y":
-				shouldYouContinue();
+				System.out.println("Restarting a new round...");
+				System.out.println();
+				rounds();
+
 				break;
 			case "n":
-				System.out.println("Exiting the program...");
-				return;
+				hiLo.doYouWantToPlayHiLo();
+				break;
 			default:
 				System.out.println("Invalid input. Please enter 'y' or 'n'.");
 			}
 		}
 	}
+	
+	
+    
+	public void throwAwayUsedCards() {
+		d.discardHandToDeck(usedCards);
+		p.discardHandToDeck(usedCards);
+	}
+
+	public void titleScreen() {
+		System.out.println("┌─────────┐┌─────────┐\n" + "│ A       ││ 10      │\n" + "│         ││         │\n"
+				+ "│         ││         │\n" + "│    ♥    ││    ♥    │\n" + "│         ││         │\n"
+				+ "│         ││         │\n" + "│       A ││      10 │\n" + "└─────────┘└─────────┘");
+		System.out.println("Welcome to Blackjack, Java Style!");
+		System.out.println("----------------------------------------------");
+	}
+
 }

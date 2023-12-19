@@ -1,36 +1,25 @@
 package com.skilldistillery.blackjack.entities;
 
-
 public enum Suit {
-    // Enum constants representing each suit with its associated name and symbol
-    HEARTS("Hearts", "♥"),
-    SPADES("Spades", "♠"),
-    CLUBS("Clubs", "♣"),
-    DIAMONDS("Diamonds", "♦");
+	HEARTS("♥", Color.RED),
+    DIAMONDS("♦", Color.RED),
+    CLUBS("♣", Color.BLACK),
+    SPADES("♠", Color.BLACK);
 
-    // Instance variables for each enum constant
-    private String suit;
+   
     private String symbol;
+    private Color color;
 
-    // Constructor for each enum constant, initializing the suit name and symbol
-    Suit(String suit, String symbol) {
-        this.suit = suit;
+    Suit(String symbol, Color color) {
         this.symbol = symbol;
+        this.color = color;
     }
 
-    // Getter method to retrieve the suit name
-    public String getName() {
-        return suit;
-    }
-
-    // Getter method to retrieve the suit symbol
     public String getSymbol() {
         return symbol;
     }
 
-    // Override the toString method to return the suit name
-    @Override
-    public String toString() {
-        return suit;
+    public Color getColor() {
+        return color;
     }
 }

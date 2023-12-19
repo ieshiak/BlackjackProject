@@ -1,82 +1,43 @@
-// Dealer working debug prints
 package com.skilldistillery.blackjack.entities;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
-public class Dealer {
-	private Hand hand;
-	private Deck deck;
+public class Dealer extends Player {
+	private String name;
+	private BlackjackHand bjh = new BlackjackHand();
+	
+	
+	public Dealer(String name) {
+		this.name = name;
 
-//works
-	public Dealer() {
-		this.hand = new BlackjackHand();
-		// System.out.println("Debug: Dealer created.");
 	}
 
-//works
-	public void addCardToHand(Card card) {
-		hand.addCard(card);
-		// System.out.println("Debug: Card added to dealer's hand: " + card);
+	public String getName() {
+		return name;
 	}
 
-//works
-	public void clearHand() {
-		hand.clear();
-		// System.out.println("Debug: Dealer's hand cleared.");
+	public void printFirstHand() {
+		System.out.println(this.hand.get(0));
+		faceDown();
+		System.out.println();
+		System.out.println(getName() + "'s hand is valued at " + getFirstCardValue());
+		System.out.println("----------------------------------------------");
 	}
 
-//works
-	public int getHandValue() {
-		int value = hand.getHandValue();
-		// System.out.println("Debug: Dealer's hand value: " + value);
-		return value;
-	}
-
-//works
-	public boolean isBust() {
-		boolean isBust = ((BlackjackHand) hand).isBust();
-		// System.out.println("Debug: Dealer is bust: " + isBust);
-		return isBust;
-	}
-
-//works
-	public boolean isBlackjack() {
-		boolean isBlackjack = ((BlackjackHand) hand).isBlackjack();
-		// System.out.println("Debug: Dealer has blackjack: " + isBlackjack);
-		return isBlackjack;
-	}
-
-//works
-	public void partialHand() {
-		List<Card> cards = hand.getCards();
-
-		// Check if the hand is not empty before displaying
-		if (!cards.isEmpty()) {
-			// Display the first card (partial hand)
-			System.out.println(cards.get(0));
-
-			// Optionally, you can also display the remaining cards if needed
-			for (int i = 1; i < cards.size(); i++) {
-				// Display additional cards in the hand
-				// System.out.println(cards.get(i));
+	public int getFirstCardValue() {
+		List<Card> cards = this.hand;
+		if (!this.hand.isEmpty()) {
+			Card firstCard = this.hand.get(0);
+			if (firstCard != null) {
+				return firstCard.getValue();
+			} else {
 			}
-		} else {
-			System.out.println("No cards in the hand.");
 		}
 
+		return 0;
 	}
 
-//works but same card is being displayed
-	public void dealerPartialHand() {
-		partialHand();
-		faceDown();
-		System.out.println("----------------------------------------------");
-		System.out.println("      Dealer's Hand Valued : " + getFirstCardValue());
-		System.out.println("----------------------------------------------");
-	}
-
-//work
 	public void faceDown() {
 		System.out.println();
 		System.out.println("┌─────────┐");
@@ -89,40 +50,34 @@ public class Dealer {
 		System.out.println("│  HIDDEN │");
 		System.out.println("└─────────┘");
 	}
-
-//work
-	public int getFirstCardValue() {
-		List<Card> cards = hand.getCards();
-
-		// System.out.println("Debug: Cards in hand: " + cards);
-
-		if (!cards.isEmpty()) {
-			Card firstCard = cards.get(0);
-			if (firstCard != null) {
-				// System.out.println("Debug: First card in hand: " + firstCard);
-				return firstCard.getValue();
-			} else {
-				// System.out.println("Debug: First card is null.");
-			}
-		} else {
-			// System.out.println("Debug: Hand is empty.");
-		}
-
-		return 0;
-	}
-
-	public void revealDealerFullHand() {
-		List<Card> cards = hand.getCards();
-
-		for (Card card : cards) {
-			System.out.println(card);
-		}
-
-		System.out.println("----------------------------------------------");
-		System.out.println("Dealer's Hand Value: " + getHandValue());
-		System.out.println("----------------------------------------------");
-	}
-}
 	
-	
+	public void chooseTheDealer() {
+		 Dealer[] dealers = {
+	                new Dealer("Joker"),
+	                new Dealer("Harley Quinn"),
+	                new Dealer("Poison Ivy"),
+	                new Dealer("The Riddler"),
+	                new Dealer("Penguin")
+	        };
 
+	        System.out.println("Choose the villian for this game:");
+	        for (int i = 0; i < dealers.length; i++) {
+	            System.out.println((i + 1) + ". " + dealers[i].getName());
+	        }
+
+	        Scanner scanner = new Scanner(System.in);
+	        int choice;
+	        do {
+	            System.out.print("Enter the number of your chosen villian: ");
+	            while (!scanner.hasNextInt()) {
+	                System.out.println("Invalid input. Please enter a number.");
+	                scanner.next();
+	        	 
+	            }
+	            choice = scanner.nextInt();
+	        } while (choice < 1 || choice > dealers.length);
+
+	        this.name = dealers[choice - 1].getName();
+	        System.out.println("----------------------------------------------");
+	    }
+	}

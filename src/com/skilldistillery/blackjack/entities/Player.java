@@ -1,134 +1,116 @@
-// Player working debug prints
 package com.skilldistillery.blackjack.entities;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class Player {
+public class Player extends BlackjackHand {
 	private String name;
-	private Hand hand;
-	private Deck deck;
-
-//works
+	private int bet;
+	private int balance;
+	Scanner scanner = new Scanner(System.in);
 	public Player() {
-		this.hand = new BlackjackHand();
-		// System.out.println("Debug: Player " + name + " created.");
-
+		this.balance = 1000;
 	}
-
-//works	
-	// Method for the player to input their name during the game
+	public String getName(){
+	    return this.name;
+	}
 	public void inputNameDuringGame() {
-		Scanner scanner = new Scanner(System.in);
 		System.out.print("Enter your name: ");
 		this.name = scanner.nextLine();
-	}
-
-//work	
-	// Method for the player to decide whether to hit or stand
-	public void hitOrStand() {
-		Scanner scanner = new Scanner(System.in);
-		int choice = 0;
-		boolean getNum = true;
-
-		// While getting a number...
-		while (getNum) {
-			try {
-				System.out.println("\nWould you like to: 1) Hit or 2) Stand");
-				System.out.println("----------------------------------------------");
-				choice = scanner.nextInt();
-				getNum = false;
-
-			} catch (Exception e) {
-				System.out.println("\nInvalid choice. Please enter 1 to hit or 2 to stand.");
-				System.out.println("----------------------------------------------");
-				scanner.next(); // Consume the invalid input
-			}
-		}
-
-		// Print the player's name and choice for testing
-		System.out.println(this.name + " you chose " + choice);
-	}
-
-	public String getName() {
-		return name;
-	}
-
-//work	
-	public void addCardToHand(Card card) {
-		if (card != null) {
-			hand.addCard(card);
-			// System.out.println("Debug: Card added to " + getName() + "'s hand: " + card);
-		} else {
-			// System.out.println("Debug: Attempted to add a null card to the hand.");
-		}
-	}
-
-//work
-	public void clearHand() {
-		hand.clear();
-		// System.out.println("Debug: " + name + "'s hand cleared.");
-	}
-
-//work
-	public int getHandValue() {
-		int value = hand.getHandValue();
-		// System.out.println("Debug: " + name + "'s hand value: " + value);
-		return value;
-	}
-
-//works
-	public boolean isBust() {
-		boolean isBust = ((BlackjackHand) hand).isBust();
-		// System.out.println("Debug: " + name + " is bust: " + isBust);
-		return isBust;
-	}
-
-//works	
-	public boolean isBlackjack() {
-		boolean isBlackjack = ((BlackjackHand) hand).isBlackjack();
-		// System.out.println("Debug: " + name + " has blackjack: " + isBlackjack);
-		return isBlackjack;
-	}
-
-//works but same card is being displayed
-	public void playersDisplayFirstHand() {
-		List<Card> cards = hand.getCards();
-
-		for (Card card : cards) {
-			System.out.println(card);
-		}
-
-		System.out.println("----------------------------------------------");
-		System.out.println("         " + name + "'s Hand Value: " + getHandValue());
 		System.out.println("----------------------------------------------");
 	}
+	public void placeBet() {
+	    System.out.println("Current balance: " + balance);
+	    System.out.print("Enter your bet: ");
 
-//	public void playerDiscard() {
-//		List<Card> usedCards = hand.getCards();
-//		deck.addToDiscardPile(usedCards.toArray(new Card[0]));
-//
-//	}
+	    int selectedBet;
+	    while (true) {
+	        try {
+	            selectedBet = Integer.parseInt(scanner.nextLine());
+	            System.out.println("----------------------------------------------");
 
-	public void setDeck(Deck deck) {
-		this.deck = deck;
+	            if (selectedBet > 0 && selectedBet <= balance) {
+	                balance -= selectedBet;
+	                this.bet = selectedBet;
+
+	                break;
+	            } else {
+	                System.out.println("Invalid bet. Please enter a valid amount within your balance.");
+	            }
+	        } catch (NumberFormatException e) {
+	            System.out.println("Invalid input. Please enter a valid number.");
+	        }
+	    }
+
+	    System.out.println("Bet placed: " + this.bet);
+	    System.out.println("Updated balance: " + balance);
+	    System.out.println("----------------------------------------------");
 	}
 
-	public boolean hasCards() {
-		return deck.size() > 0;
+	public int getBet() {
+        return bet;
+    }
+	
+	public int getBalance() {
+        return balance;
+    }
+	public void deductBalance(int amount) {
+            balance -= amount;
 	}
 
-//public void hit(Card discard) {
-//    // If there are no cards left in the deck
-//    if (!hasCards()) {
-//        reloadDeckFromDiscard(discard);
-//    }
-//
-//    // Assuming 'takeCardFromDeck' is a method in the 'hand' object to add a card to the hand
-//    cards.add(card);
-//
-//    System.out.println(name + " gets a card");
-//    printHand();
-//}
+    public void addBalance(int amount) {
+        balance += amount;
+    }
+
+public void displayHandAndValue(){
+	for (Card card : this.getHand()) {
+		System.out.println(card);
+	}	
+    System.out.println(getName() + "'s hand is valued at "+ valueOfCurrentHand());
+    System.out.println("----------------------------------------------");
+    }
+
+
+public void hitOrStand(Deck deck, Deck usedCards) {
+	Scanner scanner = new Scanner(System.in);
+	int  decision = 0;
+    boolean getNum = true;
+
+    while(getNum){
+
+        try{
+            System.out.println("Would you like to: 1) Hit or 2) Stand");
+            decision = scanner.nextInt();
+            getNum = false;
+
+        }
+        catch(Exception e){
+            System.out.println("Invalid");
+            scanner.next();
+        }
+    }
+
+    if (decision == 1) {
+        this.hit(deck, usedCards);
+        if(this.valueOfCurrentHand()>20){
+            return;
+        }
+        else{
+            this.hitOrStand(deck, usedCards);
+        }
+
+    } else {
+        System.out.println("You stand.");
+    }
+}
+
+public void hit(Deck deck, Deck usedCards){
+
+    if (!deck.hasCards()) {
+        deck.reloadFromUsedCards(usedCards);
+    }
+    this.takeCardFromDeck(deck);
+    this.displayHandAndValue();
+}
 }
